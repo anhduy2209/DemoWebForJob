@@ -6,11 +6,11 @@ const Navbar = () => {
       <div className="px-4 py-3 lg:px-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center flex-1">
-            <div className="relative md:w-64">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            {/* <div className="relative md:w-64">
+              <span className="absolute inset-y-0 left-90 flex items-center pl-3">
                 <Search className="w-5 h-5 text-gray-400" />
               </span>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center gap-4">

@@ -36,7 +36,7 @@ function LoginPage() {
                 return
             }
             toast.success(isLogin ? 'Đăng nhập thành công!' : 'Đăng ký thành công!')
-            setTimeout(() => navigate('/home'), 1000)
+            setTimeout(() => navigate('/dashboard'), 1000)
         } else {
             if (!validateVietnamesePhone(phone)) {
                 toast.error('Số điện thoại không hợp lệ')
@@ -51,7 +51,7 @@ function LoginPage() {
                     return
                 }
                 toast.success('Xác thực thành công!')
-                setTimeout(() => navigate('/home'), 1000)
+                setTimeout(() => navigate('/dashboard'), 1000)
             }
         }
     }

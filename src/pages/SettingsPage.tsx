@@ -18,6 +18,8 @@ const SettingsPage = () => {
     const handleSettingClick = (title: string, content: string) => {
         setModalContent({ title, content })
         setIsModalOpen(true)
+        console.log('SettingsPage loaded')
+
     }
 
     return (
@@ -25,12 +27,13 @@ const SettingsPage = () => {
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Cài đặt hệ thống</h1>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x">
+                {/* <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x"> */}
+                <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-300">
                     <div className="p-6">
                         <nav className="space-y-2">
                             <button
                                 onClick={() => setActiveTab('profile')}
-                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors ${activeTab === 'profile' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
+                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors shadow-md ${activeTab === 'profile' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
                                     }`}
                             >
                                 <User className="w-5 h-5 mr-3" />
@@ -38,7 +41,7 @@ const SettingsPage = () => {
                             </button>
                             <button
                                 onClick={() => setActiveTab('notifications')}
-                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors ${activeTab === 'notifications' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
+                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors shadow-md ${activeTab === 'notifications' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
                                     }`}
                             >
                                 <Bell className="w-5 h-5 mr-3" />
@@ -46,7 +49,7 @@ const SettingsPage = () => {
                             </button>
                             <button
                                 onClick={() => setActiveTab('security')}
-                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors ${activeTab === 'security' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
+                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors shadow-md ${activeTab === 'security' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
                                     }`}
                             >
                                 <Lock className="w-5 h-5 mr-3" />
