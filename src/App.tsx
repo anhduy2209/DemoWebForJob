@@ -3,6 +3,7 @@ import DashboardLayout from './layouts/DashboardLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import SettingsPage from './pages/SettingsPage'
+import UserPage from './pages/UserPage'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<HomePage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="users" element={<UserPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
