@@ -2,6 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import DashboardLayout from './layouts/DashboardLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import ProductsPage from './pages/ProductsPage'
+import ReportsPage from './pages/ReportsPage'
 import SettingsPage from './pages/SettingsPage'
 import UserPage from './pages/UserPage'
 
@@ -15,6 +17,8 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="users" element={<UserPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="reports" element={<ReportsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

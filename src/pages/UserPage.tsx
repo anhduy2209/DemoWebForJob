@@ -37,7 +37,7 @@ const UserPage = () => {
                 <h1 className="text-2xl font-bold text-gray-800 mb-6">Thông tin cá nhân</h1>
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="h-48 bg-gradient-to-r from-blue-200 to-blue-300" />
+                    <div className="h-48 bg-gradient-to-r from-blue-200 to-pink-400" />
 
                     <div className="p-6">
                         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
