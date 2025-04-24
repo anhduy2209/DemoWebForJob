@@ -11,7 +11,7 @@ const DashboardLayout = () => {
       <Navbar />
       <Sidebar setIsCollapsed={setIsCollapsed} />
       <main
-        className={`transition-all duration-300 pt-16 px-2 sm:px-4 lg:px-6 ${isCollapsed ? 'ml-20' : 'ml-64'}`}
+        className={`flex-1 transition-all duration-300 pt-16 px-2 sm:px-4 lg:px-6 ${isCollapsed ? 'ml-20' : 'ml-64'}`}
       >
         <Outlet />
       </main>
