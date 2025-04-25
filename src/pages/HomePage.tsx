@@ -125,7 +125,7 @@ const HomePage = () => {
       </div>
 
       {/* Products Bar Chart */}
-      <div className="bg-white p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-white p-4 lg:px-6 rounded-xl shadow-sm border border-gray-200">
         <h2 className="text-base lg:text-lg font-semibold text-gray-800 mb-4">
           Top sản phẩm bán chạy
         </h2>
