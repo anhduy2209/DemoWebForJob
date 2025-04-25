@@ -62,7 +62,7 @@ const SettingsPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div
                                 onClick={() => handleSettingClick('Thông tin cá nhân', 'Cập nhật thông tin cá nhân của bạn')}
-                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 shadow-md"
                             >
                                 <User className="w-6 h-6 text-blue-600 mb-2" />
                                 <h3 className="font-medium text-gray-800">Thông tin cá nhân</h3>
@@ -71,7 +71,7 @@ const SettingsPage = () => {
 
                             <div
                                 onClick={() => handleSettingClick('Thông báo', 'Quản lý cài đặt thông báo')}
-                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 shadow-md"
                             >
                                 <Bell className="w-6 h-6 text-blue-600 mb-2" />
                                 <h3 className="font-medium text-gray-800">Thông báo</h3>
@@ -80,7 +80,7 @@ const SettingsPage = () => {
 
                             <div
                                 onClick={() => handleSettingClick('Bảo mật', 'Cài đặt bảo mật tài khoản')}
-                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 shadow-md"
                             >
                                 <Shield className="w-6 h-6 text-blue-600 mb-2" />
                                 <h3 className="font-medium text-gray-800">Bảo mật</h3>
@@ -89,7 +89,7 @@ const SettingsPage = () => {
 
                             <div
                                 onClick={() => handleSettingClick('Giao diện', 'Tùy chỉnh giao diện người dùng')}
-                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 shadow-md"
                             >
                                 <Palette className="w-6 h-6 text-blue-600 mb-2" />
                                 <h3 className="font-medium text-gray-800">Giao diện</h3>
@@ -98,7 +98,7 @@ const SettingsPage = () => {
 
                             <div
                                 onClick={() => handleSettingClick('Email', 'Cài đặt email và thông báo')}
-                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 shadow-md"
                             >
                                 <Mail className="w-6 h-6 text-blue-600 mb-2" />
                                 <h3 className="font-medium text-gray-800">Email</h3>
@@ -107,7 +107,7 @@ const SettingsPage = () => {
 
                             <div
                                 onClick={() => handleSettingClick('Ngôn ngữ', 'Thay đổi ngôn ngữ hệ thống')}
-                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                                className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 shadow-md"
                             >
                                 <Globe className="w-6 h-6 text-blue-600 mb-2" />
                                 <h3 className="font-medium text-gray-800">Ngôn ngữ</h3>

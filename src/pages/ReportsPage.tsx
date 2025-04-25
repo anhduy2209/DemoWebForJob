@@ -58,7 +58,7 @@ const ReportsPage = () => {
                         color: "text-purple-600"
                     }
                 ].map((item, index) => (
-                    <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div key={index} className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                         <div className="flex items-center justify-between mb-4">
                             <div className={`p-2 ${item.bg} rounded-lg`}>{item.icon}</div>
                             <span className={`text-sm font-medium ${item.color}`}>{item.change}</span>
@@ -70,7 +70,7 @@ const ReportsPage = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Doanh thu theo tháng</h2>
                     <div className="aspect-[2/1]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -97,7 +97,7 @@ const ReportsPage = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Hiệu suất danh mục</h2>
                     <div className="aspect-[2/1]">
                         <ResponsiveContainer width="100%" height="100%">

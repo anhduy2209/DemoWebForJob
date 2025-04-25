@@ -157,7 +157,7 @@ const ProductsPage = () => {
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[640px]">
                         <thead>
