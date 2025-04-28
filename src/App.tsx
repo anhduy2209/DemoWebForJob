@@ -6,6 +6,8 @@ import ProductsPage from './pages/ProductsPage'
 import ReportsPage from './pages/ReportsPage'
 import SettingsPage from './pages/SettingsPage'
 import UserPage from './pages/UserPage'
+import API_GET from './pages/Tests/API_GET'
+import API_LOGIN from './pages/Tests/API_LOGIN'
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="users" element={<UserPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="reports" element={<ReportsPage />} />
+          <Route path="test-login" element={<API_LOGIN />} />
+          <Route path="test-get" element={<API_GET />} />
         </Route>
       </Routes>
     </BrowserRouter>
