@@ -129,7 +129,7 @@ const HomePage = () => {
         <h2 className="text-base lg:text-lg font-semibold text-gray-800 mb-4">
           Top sản phẩm bán chạy
         </h2>
-        <div className="h-60 lg:h-80">
+        <div className="h-60 lg:h-100">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={productData}

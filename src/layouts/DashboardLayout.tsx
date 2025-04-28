@@ -12,7 +12,7 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col">
         <Navbar />
         <main
-          className={`flex-1 transition-all duration-300 pt-16 px-2 sm:px-4 lg:px-6 ${isCollapsed ? 'ml-0' : 'ml-2 sm:ml-20'}`}
+          className={`flex-1 transition-all duration-300 pt-16 px-2 sm:px-4 lg:px-6 ${isCollapsed ? 'ml-0' : 'ml-2 sm:ml-0'}`}
         >
           <Outlet />
         </main>
