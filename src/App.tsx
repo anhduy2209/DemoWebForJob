@@ -6,7 +6,7 @@ import ProductsPage from './pages/ProductsPage'
 import ReportsPage from './pages/ReportsPage'
 import SettingsPage from './pages/SettingsPage'
 import UserPage from './pages/UserPage'
-import API_GET from './pages/Tests/API_GET'
+import API_GET_CHUMON from './pages/Tests/API_GET_CHUMON'
 import API_LOGIN from './pages/Tests/API_LOGIN'
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Route path="products" element={<ProductsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="test-login" element={<API_LOGIN />} />
-          <Route path="test-get" element={<API_GET />} />
+          <Route path="test-get" element={<API_GET_CHUMON />} />
         </Route>
       </Routes>
     </BrowserRouter>
