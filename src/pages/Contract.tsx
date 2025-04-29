@@ -1,6 +1,7 @@
-import axios from 'axios'; // Chắc chắn cần axios nếu bạn muốn gọi API
+
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { createContractApi } from '../api/contractApi';
 import CheckboxInput from '../components/form/CheckboxInput';
 import DateTimeInput from '../components/form/DateTimeInput';
 import NumberInput from '../components/form/NumberInput';
@@ -12,37 +13,50 @@ import { ContractFormData } from '../types/contracts';
 
 const ContractPage: React.FC = () => {
   const [form, setForm] = useState<ContractFormData>(defaultContractFormData);
-  const [loading, setLoading] = useState(false); // Trạng thái loading
-  const [error, setError] = useState<string | null>(null); // Lưu lỗi nếu có
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
+
     setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: name === 'customerId' ? Number(value) : name === 'yukoFlag' ? (checked ? 1 : 0) : value,
     }));
+    setError(null); 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // Bắt đầu loading
+    setLoading(true);
 
-    // Kiểm tra tính hợp lệ trước khi gửi (validation)
-    if (!form.contractNumber || !form.contractName || !form.startDate || !form.endDate || Number(form.totalAmount) <= 0) {
+    if (
+      !form.contractNumber ||
+      !form.contractName ||
+      !form.startDate ||
+      !form.endDate ||
+      Number(form.totalAmount) <= 0
+    ) {
       setError('Vui lòng điền đầy đủ thông tin hợp lệ.');
       setLoading(false);
       return;
     }
 
+    
+    const formattedForm = {
+      ...form,
+      startDate: new Date(form.startDate).toISOString(),
+      endDate: new Date(form.endDate).toISOString(),
+      contractPaymentList: [], 
+    };
+
     try {
-      // Thực hiện gọi API
-      const response = await axios.post('/api/contract', form); // Giả sử endpoint API của bạn là '/api/contract'
+      const response = await createContractApi(formattedForm);
       toast.success('Hợp đồng đã được lưu thành công!');
       setLoading(false);
-      // Reset form hoặc chuyển hướng nếu cần
       setForm(defaultContractFormData);
     } catch (error) {
       setError('Đã có lỗi xảy ra khi lưu hợp đồng.');
@@ -65,18 +79,56 @@ const ContractPage: React.FC = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <TextInput label="Mã hợp đồng" name="contractNumber" value={form.contractNumber} onChange={handleChange} required />
-            <TextInput label="Tên hợp đồng" name="contractName" value={form.contractName} onChange={handleChange} required />
+            <TextInput
+              label="Mã hợp đồng"
+              name="contractNumber"
+              value={form.contractNumber}
+              onChange={handleChange}
+              required
+            />
+            <TextInput
+              label="Tên hợp đồng"
+              name="contractName"
+              value={form.contractName}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <TextInput label="Khách hàng (ID)" name="customerId" value={form.customerId} onChange={handleChange} required />
+          <TextInput
+            label="Khách hàng (ID)"
+            name="customerId"
+            value={form.customerId.toString()}
+            onChange={handleChange}
+            required
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <DateTimeInput label="Ngày bắt đầu" name="startDate" value={form.startDate} onChange={handleChange} required />
-            <DateTimeInput label="Ngày kết thúc" name="endDate" value={form.endDate} onChange={handleChange} required />
+            <DateTimeInput
+              label="Ngày bắt đầu"
+              name="startDate"
+              value={form.startDate}
+              onChange={handleChange}
+              required
+              type="date"
+            />
+            <DateTimeInput
+              label="Ngày kết thúc"
+              name="endDate"
+              value={form.endDate}
+              onChange={handleChange}
+              required
+              type="date"
+            />
           </div>
 
-          <NumberInput label="Tổng số tiền" name="totalAmount" value={form.totalAmount} onChange={handleChange} required />
+          <NumberInput
+            label="Tổng số tiền"
+            name="totalAmount"
+            value={form.totalAmount}
+            onChange={handleChange}
+            required
+          />
 
           <SelectInput
             label="Trạng thái"
@@ -90,15 +142,28 @@ const ContractPage: React.FC = () => {
             ]}
           />
 
-          <TextareaInput label="Mô tả" name="description" value={form.description} onChange={handleChange} />
+          <TextareaInput
+            label="Mô tả"
+            name="description"
+            value={form.description ?? ""}
+            onChange={handleChange}
+          />
 
-          <CheckboxInput label="Còn hiệu lực" name="yukoFlag" checked={form.yukoFlag} onChange={handleChange} />
+          <CheckboxInput
+            label="Còn hiệu lực"
+            name="yukoFlag"
+            checked={!!form.yukoFlag}
+            onChange={handleChange}
+          />
 
           <div className="flex justify-between gap-4">
             <button
               type="reset"
               className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors"
-              onClick={() => setForm(defaultContractFormData)}
+              onClick={() => {
+                setForm(defaultContractFormData);
+                setError(null);
+              }}
             >
               Hủy
             </button>

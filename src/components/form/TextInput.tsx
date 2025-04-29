@@ -6,13 +6,21 @@ interface TextInputProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     required?: boolean;
+    type?: 'text' | 'number' | 'date';
 }
 
-const TextInput: React.FC<TextInputProps> = ({ label, name, value, onChange, required = false }) => (
+const TextInput: React.FC<TextInputProps> = ({
+    label,
+    name,
+    value,
+    onChange,
+    required = false,
+    type = 'text',
+}) => (
     <div>
         <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
         <input
-            type="text"
+            type={type}
             name={name}
             value={value}
             onChange={onChange}

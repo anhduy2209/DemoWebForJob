@@ -6,13 +6,21 @@ interface DateTimeInputProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     required?: boolean;
+    type?: 'date' | 'datetime-local'; 
 }
 
-const DateTimeInput: React.FC<DateTimeInputProps> = ({ label, name, value, onChange, required = false }) => (
+const DateTimeInput: React.FC<DateTimeInputProps> = ({
+    label,
+    name,
+    value,
+    onChange,
+    required = false,
+    type = 'datetime-local', 
+}) => (
     <div>
         <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
         <input
-            type="datetime-local"
+            type={type}  
             name={name}
             value={value}
             onChange={onChange}

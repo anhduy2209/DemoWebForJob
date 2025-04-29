@@ -1,32 +1,35 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import DashboardLayout from './layouts/DashboardLayout'
-import ContractPage from './pages/Contract'
-import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import ProductsPage from './pages/ProductsPage'
-import ReportsPage from './pages/ReportsPage'
-import SettingsPage from './pages/SettingsPage'
-import API_LOGIN from './pages/Tests/API_LOGIN'
-import UserPage from './pages/UserPage'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
+import DashboardLayout from './layouts/DashboardLayout';
+import ContractPage from './pages/Contract';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import ProductsPage from './pages/ProductsPage';
+import ReportsPage from './pages/ReportsPage';
+import SettingsPage from './pages/SettingsPage';
+import API_LOGIN from './pages/Tests/API_LOGIN';
+import UserPage from './pages/UserPage';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="users" element={<UserPage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="contracts" element={<ContractPage />} />
-          <Route path="test-login" element={<API_LOGIN />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="users" element={<UserPage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="contracts" element={<ContractPage />} />
+            <Route path="test-login" element={<API_LOGIN />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;

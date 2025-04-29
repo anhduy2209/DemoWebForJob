@@ -1,13 +1,14 @@
+// data/contracts.ts
 import { ContractFormData } from '../types/contracts';
 
 export const defaultContractFormData: ContractFormData = {
   contractNumber: '',
   contractName: '',
-  customerId: '',
+  customerId: 0,
   startDate: '',
   endDate: '',
-  totalAmount: '',
+  totalAmount: 0,
   status: 'ACTIVE',
   description: '',
-  yukoFlag: true
+  yukoFlag: true,
 };

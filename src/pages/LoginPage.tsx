@@ -1,10 +1,8 @@
-import axios from "axios";
 import { ArrowRight, Lock, Mail, Phone } from "lucide-react";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from "../utils/constants";
-
+import { loginApi } from "../api/loginApi";
 
 function LoginPage() {
     const [isLogin, setIsLogin] = useState(true)
@@ -17,7 +15,6 @@ function LoginPage() {
     const [showOtp, setShowOtp] = useState(false)
 
     const navigate = useNavigate();
-
 
     const validateVietnamesePhone = (phone: string) => {
         return phone.match(/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\d)(\s|\.)?(\d{3})(\s|\.)?(\d{3})$/)
@@ -32,20 +29,14 @@ function LoginPage() {
                 return
             }
 
-            // Không cần kiểm tra độ dài mật khẩu nữa
             if (isLogin) {
                 try {
-                    const res = await axios.post(`${API_URL}/login`, {
-                        userName: username,
-                        password: password,
-                    })
-
-                    localStorage.setItem('authToken', res.data.token)
+                    const res = await loginApi(username, password)
+                    localStorage.setItem('authToken', res.token)
                     toast.success('Đăng nhập thành công!')
-                    navigate('/dashboard');
+                    navigate('/dashboard')
                 } catch (error: any) {
-                    const message =
-                        error.response?.data?.message || 'Đăng nhập thất bại'
+                    const message = error.response?.data?.message || 'Đăng nhập thất bại'
                     toast.error(message)
                 }
             } else {
@@ -189,4 +180,4 @@ function LoginPage() {
     )
 }
 
-export default LoginPage
+export default LoginPage;

@@ -13,7 +13,7 @@ const TextareaInput: React.FC<TextareaInputProps> = ({ label, name, value, onCha
         <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
         <textarea
             name={name}
-            value={value}
+            value={value ?? ""}
             onChange={onChange}
             rows={rows}
             className="w-full px-4 py-2 border border-gray-300 rounded"
