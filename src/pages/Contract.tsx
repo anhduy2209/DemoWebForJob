@@ -1,6 +1,7 @@
 import { Filter } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createContract, getAllContracts } from '../api/contractApi';
+import ContractFilterPanel from '../components/ContractFilter';
 import CheckboxInput from '../components/form/CheckboxInput';
 import DateTimeInput from '../components/form/DateTimeInput';
 import NumberInput from '../components/form/NumberInput';
@@ -18,6 +19,34 @@ const ContractPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showContracts, setShowContracts] = useState(false); // New: toggle contracts list
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    contractNumber: '',
+    contractName: '',
+    status: '',
+    customerId: '',
+    minTotalAmount: '',
+    maxTotalAmount: '',
+    startDate: '',
+    endDate: '',
+    yukoFlag: '',
+  });
+
+  const filterRef = useRef<HTMLDivElement>(null); // Reference to the filter panel container
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
 
   useEffect(() => {
     const fetchContracts = async () => {
@@ -116,21 +145,90 @@ const ContractPage: React.FC = () => {
     }).format(value);
   };
 
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleConfirm = async () => {
+    // Thực hiện gọi API với các bộ lọc
+    setLoading(true);
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        setError('Bạn chưa đăng nhập!');
+        setLoading(false);
+        return;
+      }
+
+      const filteredContracts = await getAllContracts(authToken); // API sẽ nhận các filters
+      const filteredData = (filteredContracts?.Data || []).filter((contract: any) => {
+        // Áp dụng bộ lọc từ state
+        return (
+          (filters.contractNumber ? contract.ContractNumber.includes(filters.contractNumber) : true) &&
+          (filters.contractName ? contract.ContractName.includes(filters.contractName) : true) &&
+          (filters.status ? contract.Status === filters.status : true)
+        );
+      });
+
+      setContracts(filteredData);
+      setLoading(false);
+    } catch (error) {
+      setError('Không thể tải danh sách hợp đồng.');
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold text-gray-800">Quản lý hợp đồng</h1>
         <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center mb-4">
-          <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          <button
+            onClick={() => setShowFilters(prev => !prev)}
+            className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <Filter className="w-5 h-5" />
             Bộ lọc
+
           </button>
+
+          {showFilters && (
+            <div
+              ref={filterRef}
+              className="absolute  z-10"
+              style={{ top: '15%', left: '40%' }}
+            >
+              <ContractFilterPanel
+                filters={filters}
+                onChange={handleFilterChange}
+                onReset={() =>
+                  setFilters({
+                    contractNumber: '',
+                    contractName: '',
+                    status: '',
+                    customerId: '',
+                    minTotalAmount: '',
+                    maxTotalAmount: '',
+                    startDate: '',
+                    endDate: '',
+                    yukoFlag: '',
+                  })
+                }
+                onConfirm={handleConfirm}
+              />
+            </div>
+          )}
+
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
-          >
-            📄 Xem hợp đồng
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >Xem hợp đồng
           </button>
           <Modal
             isOpen={isModalOpen}
