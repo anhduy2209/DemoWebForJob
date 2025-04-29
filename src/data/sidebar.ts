@@ -1,4 +1,5 @@
 import {
+    ClipboardMinus,
     FileText,
     LayoutDashboard,
     Settings,
@@ -24,8 +25,13 @@ export const sidebarItems: SidebarItem[] = [
         path: '/dashboard/products'
     },
     {
-        title: 'Báo cáo',
+        title: 'Hợp đồng',
         icon: FileText,
+        path: '/dashboard/contracts'
+    },
+    {
+        title: 'Báo cáo',
+        icon: ClipboardMinus,
         path: '/dashboard/reports'
     },
     {
