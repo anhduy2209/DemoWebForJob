@@ -19,7 +19,7 @@ import { categoryData, productData, revenueData, stats } from '../data/dashboard
 
 const HomePage = () => {
   return (
-    <div className="p-4 lg:p-6">
+    <div className="w-full px-4 sm:px-6 lg:px-6">
       <h1 className="text-xl lg:text-2xl font-bold text-gray-800 mb-4 lg:mb-6">Tổng quan</h1>
 
       {/* Stats Grid */}

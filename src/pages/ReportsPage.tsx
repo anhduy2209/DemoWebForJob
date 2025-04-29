@@ -16,7 +16,7 @@ import { categoryPerformance, monthlyRevenue } from '../data/reports'
 
 const ReportsPage = () => {
     return (
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
+        <div className="w-full px-4 sm:px-6 lg:px-6">
             <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-800">Báo cáo doanh thu</h1>
                 <div className="flex items-center gap-4">

@@ -46,7 +46,7 @@ const API_GET_CHUMON = () => {
   if (error) return <div className="px-4 py-6 text-red-600">Lỗi: {error}</div>;
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
+    <div className="w-full px-4 sm:px-6 lg:px-6 py-4">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold text-gray-800">
           Quản lý đơn hàng (Chumon)

@@ -1,21 +1,24 @@
 import { Filter, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChumonType } from "../types/";
 
 const ProductPage = () => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+
   const [chumons, setChumons] = useState<ChumonType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    window.location.href = "/dashboard/products"
-    return null;
-  }
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // async function fetchChumon() {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      navigate("/login"); // điều hướng về trang login nếu chưa có token
+      return;
+    }
+
     const fetchChumon = async () => {
       try {
         const res = await fetch(`${API_URL}/Chumon`, {
@@ -25,28 +28,35 @@ const ProductPage = () => {
             "Content-Type": "application/json",
           },
         });
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
+
+        if (res.status === 401) {
+          localStorage.removeItem("authToken");
+          navigate("/login"); // token hết hạn → chuyển login
+          return;
         }
+
+        if (!res.ok) {
+          throw new Error("Không thể tải dữ liệu từ máy chủ.");
+        }
+
         const data = await res.json();
         setChumons(data.Data);
-        console.log(data);
       } catch (error: any) {
-        setError(error.message);
         console.error("Error fetching data:", error);
+        setError(error.message || "Lỗi không xác định");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchChumon();
-  }, []);
+  }, [API_URL, navigate]);
 
   if (isLoading) return <div className="px-4 py-6">Đang tải dữ liệu...</div>;
   if (error) return <div className="px-4 py-6 text-red-600">Lỗi: {error}</div>;
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
+    <div className="w-full px-4 sm:px-6 lg:px-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold text-gray-800">
           Quản lý đơn hàng (Chumon)
