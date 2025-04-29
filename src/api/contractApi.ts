@@ -1,14 +1,36 @@
-import { ContractApiPayload } from '../types/contracts';
-import axios from '../utils/axiosInstance';
+import { axiosInstance } from "../utils/axiosInstance";
 
-export const createContractApi = async (contractData: ContractApiPayload) => {
-    // Chuyển đổi startDate và endDate sang định dạng ISO 8601
-    const formattedData = {
-        ...contractData,
-        startDate: new Date(contractData.startDate).toISOString(),
-        endDate: new Date(contractData.endDate).toISOString(),
-    };
+export const getAllContracts = async (token: string) => {
+  const res = await axiosInstance.get("/Contract/GetPage", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
 
-    const response = await axios.post('/Contract', formattedData);
-    return response.data;
+export const getContractById = async (id: number, token: string) => {
+  const res = await axiosInstance.get(`/Contract/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+export const createContract = async (data: any, token: string) => {
+  const res = await axiosInstance.post("/Contract", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+export const updateContract = async (id: number, data: any, token: string) => {
+  const res = await axiosInstance.put(`/Contract/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+export const deleteContract = async (id: number, token: string) => {
+  const res = await axiosInstance.delete(`/Contract/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
 };

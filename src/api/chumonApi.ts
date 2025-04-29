@@ -1,4 +1,4 @@
-import { axiosInstance } from "../axios";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export const getAllChumon = async (token: string) => {
   const res = await axiosInstance.get("/Chumon", {

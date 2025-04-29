@@ -12,6 +12,7 @@ export interface Contract {
     createdAt: string;
     updatedAt: string;
     yukoFlag: 0 | 1;
+    // yukoFlag: number;
     contractPaymentList: ContractPayment[];
 }
 
@@ -23,6 +24,7 @@ export interface ContractPayment {
 }
 
 export interface ContractFormData {
+    contractPaymentList: never[];
     contractNumber: string;
     contractName: string;
     customerId: number;
@@ -32,6 +34,7 @@ export interface ContractFormData {
     status: 'ACTIVE' | 'PENDING' | 'EXPIRED';
     description?: string;
     yukoFlag: 0 | 1;
+    // yukoFlag: number;
 }
 
 export interface ContractApiPayload {
@@ -44,5 +47,6 @@ export interface ContractApiPayload {
     status: 'ACTIVE' | 'PENDING' | 'EXPIRED';
     description?: string;
     yukoFlag: 0 | 1;
+    // yukoFlag: number;
     contractPaymentList: ContractPayment[];
 }

@@ -10,5 +10,7 @@ export const defaultContractFormData: ContractFormData = {
   totalAmount: 0,
   status: 'ACTIVE',
   description: '',
-  yukoFlag: true,
+  yukoFlag: 0,
+  // yukoFlag: 0,
+  contractPaymentList: []
 };

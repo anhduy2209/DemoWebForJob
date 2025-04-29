@@ -1,7 +1,5 @@
-
-import React, { useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { createContractApi } from '../api/contractApi';
+import React, { useEffect, useState } from 'react';
+import { createContract, getAllContracts } from '../api/contractApi';
 import CheckboxInput from '../components/form/CheckboxInput';
 import DateTimeInput from '../components/form/DateTimeInput';
 import NumberInput from '../components/form/NumberInput';
@@ -9,29 +7,71 @@ import SelectInput from '../components/form/SelectInput';
 import TextareaInput from '../components/form/TextareaInput';
 import TextInput from '../components/form/TextInput';
 import { defaultContractFormData } from '../data/contracts';
-import { ContractFormData } from '../types/contracts';
+import { Contract, ContractFormData } from '../types/contracts';
 
 const ContractPage: React.FC = () => {
   const [form, setForm] = useState<ContractFormData>(defaultContractFormData);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch contracts when the component mounts
+  useEffect(() => {
+    const fetchContracts = async () => {
+      setLoading(true);
+      try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          setError('Bạn chưa đăng nhập!');
+          setLoading(false);
+          return;
+        }
+
+        const data = await getAllContracts(authToken);
+        console.log('Dữ liệu trả về từ API:', data);
+
+        const normalizedContracts = (data?.Data || []).map((contract: any) => ({
+          contractId: contract.ContractId,
+          contractNumber: contract.ContractNumber,
+          contractName: contract.ContractName,
+          customerId: contract.CustomerId,
+          status: contract.Status,
+          totalAmount: contract.TotalAmount,
+          description: contract.Description,
+          startDate: contract.StartDate,
+          endDate: contract.EndDate,
+          yukoFlag: contract.YukoFlag,
+          createdAt: contract.CreatedAt,
+          updatedAt: contract.UpdatedAt,
+          lastUpdate: contract.LastUpdate,
+          lastUpdateUser: contract.LastUpdateUser,
+          lastUpdateProgram: contract.LastUpdateProgram,
+        }));
+
+        setContracts(normalizedContracts);
+        setLoading(false);
+      } catch (err: any) {
+        setError('Không thể tải danh sách hợp đồng.');
+        setLoading(false);
+      }
+    };
+
+    fetchContracts();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-
     setForm((prev) => ({
       ...prev,
-      [name]: name === 'customerId' ? Number(value) : name === 'yukoFlag' ? (checked ? 1 : 0) : value,
+      [name]: type === 'checkbox' ? (checked ? 1 : 0) : value,
     }));
-    setError(null); 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     if (
       !form.contractNumber ||
@@ -40,27 +80,28 @@ const ContractPage: React.FC = () => {
       !form.endDate ||
       Number(form.totalAmount) <= 0
     ) {
-      setError('Vui lòng điền đầy đủ thông tin hợp lệ.');
-      setLoading(false);
+      alert('Vui lòng điền đầy đủ thông tin hợp lệ.');
       return;
     }
 
-    
     const formattedForm = {
       ...form,
       startDate: new Date(form.startDate).toISOString(),
       endDate: new Date(form.endDate).toISOString(),
-      contractPaymentList: [], 
+      contractPaymentList: form.contractPaymentList || [],
     };
+    console.log('Dữ liệu gửi lên API:', formattedForm);
 
     try {
-      const response = await createContractApi(formattedForm);
-      toast.success('Hợp đồng đã được lưu thành công!');
-      setLoading(false);
-      setForm(defaultContractFormData);
+      const authToken = localStorage.getItem('authToken');
+      const response = await createContract(formattedForm, authToken || '');
+      console.log('Hợp đồng đã được tạo:', response);
+      alert('Hợp đồng đã được lưu thành công!');
+      setForm(defaultContractFormData); // Reset form
+      setContracts((prev) => [...prev, response]); // Thêm hợp đồng mới vào danh sách
     } catch (error) {
-      setError('Đã có lỗi xảy ra khi lưu hợp đồng.');
-      setLoading(false);
+      console.error('Lỗi khi tạo hợp đồng:', error);
+      alert('Đã xảy ra lỗi khi lưu hợp đồng.');
     }
   };
 
@@ -70,14 +111,47 @@ const ContractPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800">Quản lý hợp đồng</h1>
       </div>
 
+      {/* Hiển thị danh sách hợp đồng */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-6 mb-6">
+        {loading && <p>Đang tải danh sách hợp đồng...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && !error && (
+          <table className="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 px-4 py-2">Mã hợp đồng</th>
+                <th className="border border-gray-300 px-4 py-2">Tên hợp đồng</th>
+                <th className="border border-gray-300 px-4 py-2">Khách hàng</th>
+                <th className="border border-gray-300 px-4 py-2">Trạng thái</th>
+                <th className="border border-gray-300 px-4 py-2">Tổng số tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contracts.length > 0 ? (
+                contracts.map((contract) => (
+                  <tr key={contract.contractId || `${contract.contractNumber}-${Math.random()}`}>
+                    <td className="border border-gray-300 px-4 py-2">{contract.contractNumber}</td>
+                    <td className="border border-gray-300 px-4 py-2">{contract.contractName}</td>
+                    <td className="border border-gray-300 px-4 py-2">{contract.customerId}</td>
+                    <td className="border border-gray-300 px-4 py-2">{contract.status}</td>
+                    <td className="border border-gray-300 px-4 py-2">{contract.totalAmount}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="border border-gray-300 px-4 py-2 text-center">
+                    Không có hợp đồng nào.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Form tạo hợp đồng */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="text-red-500 mb-4 p-3 bg-red-100 rounded-lg">
-              {error}
-            </div>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <TextInput
               label="Mã hợp đồng"
@@ -110,7 +184,6 @@ const ContractPage: React.FC = () => {
               value={form.startDate}
               onChange={handleChange}
               required
-              type="date"
             />
             <DateTimeInput
               label="Ngày kết thúc"
@@ -118,7 +191,6 @@ const ContractPage: React.FC = () => {
               value={form.endDate}
               onChange={handleChange}
               required
-              type="date"
             />
           </div>
 
@@ -145,7 +217,7 @@ const ContractPage: React.FC = () => {
           <TextareaInput
             label="Mô tả"
             name="description"
-            value={form.description ?? ""}
+            value={form.description ?? ''}
             onChange={handleChange}
           />
 
@@ -156,23 +228,12 @@ const ContractPage: React.FC = () => {
             onChange={handleChange}
           />
 
-          <div className="flex justify-between gap-4">
-            <button
-              type="reset"
-              className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors"
-              onClick={() => {
-                setForm(defaultContractFormData);
-                setError(null);
-              }}
-            >
-              Hủy
-            </button>
+          <div>
             <button
               type="submit"
-              className={`px-6 py-2 ${loading ? 'bg-gray-400' : 'bg-blue-500'} text-white rounded-lg hover:bg-blue-600 transition-colors`}
-              disabled={loading}
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
-              {loading ? 'Đang lưu...' : 'Lưu hợp đồng'}
+              Lưu hợp đồng
             </button>
           </div>
         </form>
@@ -182,3 +243,4 @@ const ContractPage: React.FC = () => {
 };
 
 export default ContractPage;
+
