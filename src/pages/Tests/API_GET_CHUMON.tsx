@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ChumonType } from "../../types";
 import { Filter, Plus } from "lucide-react";
 
-const API_GET = () => {
+const API_GET_CHUMON = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [chumons, setChumons] = useState<ChumonType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,4 +133,4 @@ const API_GET = () => {
   );
 };
 
-export default API_GET;
+export default API_GET_CHUMON;
