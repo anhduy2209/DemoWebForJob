@@ -1,7 +1,7 @@
 import { axiosInstance } from "../utils/axiosInstance";
 
-export const getAllChumon = async (token: string) => {
-  const res = await axiosInstance.get("/Chumon", {
+export const getAllChumons = async (token: string) => {
+  const res = await axiosInstance.get("/Chumon/GetPage", {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
