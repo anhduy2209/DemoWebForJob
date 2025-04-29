@@ -6,7 +6,6 @@ import LoginPage from './pages/LoginPage'
 import ProductsPage from './pages/ProductsPage'
 import ReportsPage from './pages/ReportsPage'
 import SettingsPage from './pages/SettingsPage'
-import API_GET from './pages/Tests/API_GET'
 import API_LOGIN from './pages/Tests/API_LOGIN'
 import UserPage from './pages/UserPage'
 
@@ -24,7 +23,6 @@ function App() {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="contracts" element={<ContractPage />} />
           <Route path="test-login" element={<API_LOGIN />} />
-          <Route path="test-get" element={<API_GET />} />
         </Route>
       </Routes>
     </BrowserRouter>
