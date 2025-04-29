@@ -1,3 +1,4 @@
+import { Filter } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { createContract, getAllContracts } from '../api/contractApi';
 import CheckboxInput from '../components/form/CheckboxInput';
@@ -6,6 +7,7 @@ import NumberInput from '../components/form/NumberInput';
 import SelectInput from '../components/form/SelectInput';
 import TextareaInput from '../components/form/TextareaInput';
 import TextInput from '../components/form/TextInput';
+import Modal from '../components/Modal';
 import { defaultContractFormData } from '../data/contracts';
 import { Contract, ContractFormData } from '../types/contracts';
 
@@ -14,8 +16,9 @@ const ContractPage: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showContracts, setShowContracts] = useState(false); // New: toggle contracts list
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Fetch contracts when the component mounts
   useEffect(() => {
     const fetchContracts = async () => {
       setLoading(true);
@@ -97,57 +100,104 @@ const ContractPage: React.FC = () => {
       const response = await createContract(formattedForm, authToken || '');
       console.log('Hợp đồng đã được tạo:', response);
       alert('Hợp đồng đã được lưu thành công!');
-      setForm(defaultContractFormData); // Reset form
-      setContracts((prev) => [...prev, response]); // Thêm hợp đồng mới vào danh sách
+      setForm(defaultContractFormData);
+      setContracts((prev) => [...prev, response]);
     } catch (error) {
       console.error('Lỗi khi tạo hợp đồng:', error);
       alert('Đã xảy ra lỗi khi lưu hợp đồng.');
     }
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold text-gray-800">Quản lý hợp đồng</h1>
+        <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center mb-4">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <Filter className="w-5 h-5" />
+            Bộ lọc
+          </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+          >
+            📄 Xem hợp đồng
+          </button>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title="Danh sách hợp đồng"
+          >
+            {loading && <p>Đang tải...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            {!loading && !error && (
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 max-h-[70vh] overflow-y-auto">
+                {contracts.length > 0 ? (
+                  contracts.map((contract) => (
+                    <div
+                      key={contract.contractId || `${contract.contractNumber}-${Math.random()}`}
+                      className="border border-gray-300 rounded p-4 shadow-sm"
+                    >
+                      <h3 className="font-semibold">{contract.contractName}</h3>
+                      <p><strong>Mã:</strong> {contract.contractNumber}</p>
+                      <p><strong>Khách hàng:</strong> {contract.customerId}</p>
+                      <p><strong>Trạng thái:</strong> {contract.status}</p>
+                      <p><strong>Tổng tiền:</strong> {formatCurrency(contract.totalAmount)}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p>Không có hợp đồng nào.</p>
+                )}
+              </div>
+            )}
+          </Modal>
+        </div>
+
       </div>
 
       {/* Hiển thị danh sách hợp đồng */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-6 mb-6">
+      {/* <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-6 mb-6">
+        <button
+          onClick={() => setShowContracts((prev) => !prev)}
+          className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+        >
+          {showContracts ? 'Ẩn danh sách hợp đồng' : 'Xem danh sách hợp đồng'}
+        </button>
+
         {loading && <p>Đang tải danh sách hợp đồng...</p>}
         {error && <p className="text-red-500">{error}</p>}
-        {!loading && !error && (
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 px-4 py-2">Mã hợp đồng</th>
-                <th className="border border-gray-300 px-4 py-2">Tên hợp đồng</th>
-                <th className="border border-gray-300 px-4 py-2">Khách hàng</th>
-                <th className="border border-gray-300 px-4 py-2">Trạng thái</th>
-                <th className="border border-gray-300 px-4 py-2">Tổng số tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {contracts.length > 0 ? (
-                contracts.map((contract) => (
-                  <tr key={contract.contractId || `${contract.contractNumber}-${Math.random()}`}>
-                    <td className="border border-gray-300 px-4 py-2">{contract.contractNumber}</td>
-                    <td className="border border-gray-300 px-4 py-2">{contract.contractName}</td>
-                    <td className="border border-gray-300 px-4 py-2">{contract.customerId}</td>
-                    <td className="border border-gray-300 px-4 py-2">{contract.status}</td>
-                    <td className="border border-gray-300 px-4 py-2">{contract.totalAmount}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="border border-gray-300 px-4 py-2 text-center">
-                    Không có hợp đồng nào.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        {showContracts && !loading && !error && (
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+            {contracts.length > 0 ? (
+              contracts.map((contract) => (
+                <div
+                  key={contract.contractId || `${contract.contractNumber}-${Math.random()}`}
+                  className="border border-gray-300 rounded p-4 shadow hover:shadow-md transition"
+                >
+                  <h2 className="font-semibold text-lg mb-2">{contract.contractName}</h2>
+                  <p><strong>Mã:</strong> {contract.contractNumber}</p>
+                  <p><strong>Khách hàng:</strong> {contract.customerId}</p>
+                  <p><strong>Trạng thái:</strong> {contract.status}</p>
+                  <p><strong>Tổng tiền:</strong> {contract.totalAmount}</p>
+                </div>
+              ))
+            ) : (
+              <p>Không có hợp đồng nào.</p>
+            )}
+          </div>
         )}
-      </div>
+      </div> */}
+
+
 
       {/* Form tạo hợp đồng */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-6">
@@ -243,4 +293,3 @@ const ContractPage: React.FC = () => {
 };
 
 export default ContractPage;
-
