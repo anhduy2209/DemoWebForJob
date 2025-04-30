@@ -4,11 +4,11 @@ import DashboardLayout from './layouts/DashboardLayout';
 import ContractPage from './pages/Contract';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import ProductsPage from './pages/ProductsPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import API_LOGIN from './pages/Tests/API_LOGIN';
 import UserPage from './pages/UserPage';
+import ChumonsPage from './pages/ChumonsPage';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="users" element={<UserPage />} />
-            <Route path="products" element={<ProductsPage />} />
+            <Route path="chumons" element={<ChumonsPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="contracts" element={<ContractPage />} />
             <Route path="test-login" element={<API_LOGIN />} />

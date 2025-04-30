@@ -22,7 +22,7 @@ export const sidebarItems: SidebarItem[] = [
     {
         title: 'Sản phẩm',
         icon: ShoppingCart,
-        path: '/dashboard/products'
+        path: '/dashboard/chumons'
     },
     {
         title: 'Hợp đồng',

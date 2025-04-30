@@ -33,7 +33,7 @@ export type ContractType = {
   ContractNumber: string;
   ContractName: string;
   CustomerId: number;
-  StartDate: string; // ISO 8601 Date format (e.g., "2025-04-28T16:37:58.015Z")
+  StartDate: string;
   EndDate: string;
   TotalAmount: number;
   Status: string;
@@ -41,7 +41,7 @@ export type ContractType = {
   CreatedAt: string;
   UpdatedAt: string;
   YukoFlag: number;
-  ContractPaymentList: any[]; // Placeholder type, update based on actual structure
+  ContractPaymentList: any[];
 };
 
 export type UserType = {
@@ -49,9 +49,9 @@ export type UserType = {
   UserName: string;
   Email: string;
   PasswordHash: string;
-  Role: string; // Example roles: 'admin', 'user', etc.
-  Status: string; // Adjust status types based on your system
-  CreatedAt: string; // ISO 8601 Date format
+  Role: string;
+  Status: string;
+  CreatedAt: string;
   UpdatedAt: string;
   YukoFlag: number;
 };
@@ -60,13 +60,13 @@ export type CustomerType = {
   CustomerId: number;
   CustomerCode: string;
   CustomerName: string;
-  ContactPerson: string; // Person in charge of the customer
+  ContactPerson: string;
   Phone: string;
   Email: string;
   Address: string;
   TaxCode: string;
-  Status: string; // Adjust status types based on your system
-  CreatedAt: string; // ISO 8601 Date format
+  Status: string;
+  CreatedAt: string;
   UpdatedAt: string;
   YukoFlag: number;
   ContractList: any[];
