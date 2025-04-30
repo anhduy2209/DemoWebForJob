@@ -34,8 +34,7 @@ export const updateChumon = async (
 
 export const deleteChumon = async (id: number, token: string) => {
   const res = await axiosInstance.delete(`/Chumon/${id}`, {
-    headers: {Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };

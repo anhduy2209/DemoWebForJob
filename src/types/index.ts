@@ -28,6 +28,21 @@ export type ChumonType = {
   ChumonMeisaiList: ChumonMeisaiType[];
 };
 
+export type ChumonFormData = {
+  ChumonId?: number;
+  ChumonNo: string;
+  ChumonDate: string;
+  HojinnCode: string;
+  KonyuName: string;
+  KonyuMailAddress: string;
+  KonyuTantosha: string;
+  KonyuKingaku1: number;
+  Nebiki: number;
+  Soryo: number;
+  ZeiRitsu1: number;
+  ChumonMeisaiList?: ChumonMeisaiType[];
+};
+
 export type ContractType = {
   ContractId: number;
   ContractNumber: string;

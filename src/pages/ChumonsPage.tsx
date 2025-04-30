@@ -1,27 +1,24 @@
-import { Filter, Plus } from "lucide-react";
+import { Filter, MoreHorizontal, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChumonType } from "../types";
-import { getAllChumons, createChumon } from "../api/chumonApi"; // Giả sử bạn có API để tạo đơn hàng
-import Modal from "../components/Modal";
+import {
+  createChumon,
+  deleteChumon,
+  getAllChumons,
+  updateChumon,
+} from "../api/chumonApi";
+import ChumonModal from "../components/chumon/ChumonModal";
+import SkeletonRow from "../components/chumon/SkeletonRow";
+import toast, { Toaster } from "react-hot-toast";
 
 const ChumonsPage = () => {
   const [chumons, setChumons] = useState<ChumonType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newChumon, setNewChumon] = useState({
-    ChumonNo: "",
-    ChumonDate: "",
-    HojinnCode: "",
-    KonyuName: "",
-    KonyuMailAddress: "",
-    KonyuTantosha: "",
-    KonyuKingaku1: 0,
-    Nebiki: 0,
-    Soryo: 0,
-    ZeiRitsu1: 0,
-    ChumonMeisaiList: [],
-  });
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"add" | "edit" | "view">("add");
+  const [selectedData, setSelectedData] = useState<ChumonType | null>(null);
 
   useEffect(() => {
     const fetchChumon = async () => {
@@ -31,7 +28,7 @@ const ChumonsPage = () => {
         const data = await getAllChumons(authToken || "");
         setChumons(data.Data);
       } catch (error: any) {
-        console.error("Error fetching data:", error);
+        console.error("Lỗi:", error);
         setError(error.message || "Lỗi không xác định");
       } finally {
         setIsLoading(false);
@@ -41,33 +38,33 @@ const ChumonsPage = () => {
     fetchChumon();
   }, []);
 
-  const handleCreateChumon = async () => {
+  const handleSave = async (data: ChumonType) => {
     try {
       const authToken = localStorage.getItem("authToken");
-      const createdChumon = await createChumon(authToken || "", newChumon);
-      setChumons((prev) => [...prev, createdChumon]);
-      setIsModalOpen(false);
-      setNewChumon({
-        ChumonNo: "",
-    ChumonDate: "",
-    HojinnCode: "",
-    KonyuName: "",
-    KonyuMailAddress: "",
-    KonyuTantosha: "",
-    KonyuKingaku1: 0,
-    Nebiki: 0,
-    Soryo: 0,
-    ZeiRitsu1: 0,
-    ChumonMeisaiList: [],
-      });
-    } catch (error: any) {
-      console.error("Error creating chumon:", error);
-      setError(error.message || "Lỗi không xác định");
+
+      if (modalType === "add") {
+        const newChumon = await createChumon(data, authToken || "");
+        setChumons((prev) => [...prev, newChumon]);
+      } else if (modalType === "edit" && selectedData) {
+        const updated = await updateChumon(
+          selectedData.ChumonId,
+          data,
+          authToken || ""
+        );
+        setChumons((prev) =>
+          prev.map((item) =>
+            item.ChumonId === selectedData.ChumonId ? updated : item
+          )
+        );
+      }
+
+      setModalOpen(false);
+      setSelectedData(null);
+    } catch (err: any) {
+      console.error("Lỗi khi lưu:", err);
+      alert("Đã xảy ra lỗi khi lưu dữ liệu.");
     }
   };
-
-  if (isLoading) return <div className="px-4 py-6">Đang tải dữ liệu...</div>;
-  if (error) return <div className="px-4 py-6 text-red-600">Lỗi: {error}</div>;
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-6">
@@ -81,189 +78,16 @@ const ChumonsPage = () => {
             Bộ lọc
           </button>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setModalType("add");
+              setSelectedData(null);
+              setModalOpen(true);
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Thêm đơn hàng
           </button>
-          <Modal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title="Thêm đơn hàng"
-          >
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleCreateChumon();
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Số đơn đặt hàng
-                </label>
-                <input
-                  type="text"
-                  value={newChumon.ChumonNo}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, ChumonNo: e.target.value })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Ngày đặt hàng
-                </label>
-                <input
-                  type="datetime-local"
-                  value={newChumon.ChumonDate}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, ChumonDate: e.target.value })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Mã công ty (hội viên)
-                </label>
-                <input
-                  type="text"
-                  value={newChumon.HojinnCode}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, HojinnCode: e.target.value })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Tên người mua
-                </label>
-                <input
-                  type="text"
-                  value={newChumon.KonyuName}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, KonyuName: e.target.value })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email người mua
-                </label>
-                <input
-                  type="email"
-                  value={newChumon.KonyuMailAddress}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, KonyuMailAddress: e.target.value })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Người phụ trách
-                </label>
-                <input
-                  type="text"
-                  value={newChumon.KonyuTantosha}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, KonyuTantosha: e.target.value })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Giá trị hàng (trước thuế)
-                </label>
-                <input
-                  type="number"
-                  value={newChumon.KonyuKingaku1}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, KonyuKingaku1: Number(e.target.value) })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Giảm giá (nếu có)
-                </label>
-                <input
-                  type="number"
-                  value={newChumon.Nebiki || ""}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, Nebiki: Number(e.target.value) })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Phí vận chuyển
-                </label>
-                <input
-                  type="number"
-                  value={newChumon.Soryo || ""}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, Soryo: Number(e.target.value) })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Tỷ lệ thuế (%)
-                </label>
-                <input
-                  type="number"
-                  value={newChumon.ZeiRitsu1}
-                  onChange={(e) =>
-                    setNewChumon({ ...newChumon, ZeiRitsu1: Number(e.target.value) })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Danh sách chi tiết đặt hàng
-                </label>
-                <textarea
-                  value={JSON.stringify(newChumon.ChumonMeisaiList || [], null, 2)}
-                  onChange={(e) =>
-                    setNewChumon({
-                      ...newChumon,
-                      ChumonMeisaiList: JSON.parse(e.target.value),
-                    })
-                  }
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  rows={4}
-                  required
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  Thêm
-                </button>
-              </div>
-            </form>
-          </Modal>
         </div>
       </div>
 
@@ -293,49 +117,190 @@ const ChumonsPage = () => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Trạng thái
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Hành động
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {chumons
-                .slice()
-                .sort((a, b) => a.ChumonId - b.ChumonId)
-                .map((chumon) => (
-                  <tr key={chumon.ChumonId}>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {chumon.ChumonId}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {new Date(chumon.ChumonDate).toLocaleDateString("ja-JP")}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {chumon.KonyuName}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {chumon.KonyuMailAddress}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {chumon.KonyuTantosha}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      ¥{chumon.GokeiKingaku.toLocaleString()}
-                    </td>
-                    <td className="px-4 py-2 text-sm">
-                      <span
-                        className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                          chumon.Status === 1
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {chumon.Status === 1 ? "Hoạt động" : "Chờ xử lý"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+              {isLoading ? (
+                <>
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                  ))}
+                </>
+              ) : error ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-8 text-center text-sm text-red-500"
+                  >
+                    Lỗi khi tải dữ liệu: {error}
+                  </td>
+                </tr>
+              ) : chumons.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-8 text-center text-sm text-gray-500"
+                  >
+                    Không có đơn hàng nào để hiển thị.
+                  </td>
+                </tr>
+              ) : (
+                chumons
+                  .slice()
+                  .sort((a, b) => a.ChumonId - b.ChumonId)
+                  .map((chumon) => (
+                    <tr key={chumon.ChumonId}>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {chumon.ChumonNo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {new Date(chumon.ChumonDate).toLocaleDateString(
+                          "ja-JP"
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {chumon.KonyuName}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {chumon.KonyuMailAddress}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {chumon.KonyuTantosha}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        ¥{chumon.GokeiKingaku.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-2 text-sm">
+                        <span
+                          className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                            chumon.Status === 1
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-700"
+                          }`}
+                        >
+                          {chumon.Status === 1 ? "Hoạt động" : "Chờ xử lý"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 relative">
+                        <div className="relative">
+                          <button
+                            onClick={() => {
+                              setSelectedData(chumon);
+                              setPopupOpen((prev) =>
+                                selectedData?.ChumonId === chumon.ChumonId
+                                  ? !prev
+                                  : true
+                              );
+                            }}
+                          >
+                            <MoreHorizontal className="size-5 cursor-pointer rounded hover:bg-gray-100" />
+                          </button>
+                          {popupOpen &&
+                            selectedData?.ChumonId === chumon.ChumonId && (
+                              <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                <button
+                                  onClick={() => {
+                                    setPopupOpen(false);
+                                    setModalType("view");
+                                    setSelectedData(chumon);
+                                    setModalOpen(true);
+                                  }}
+                                  className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  Xem chi tiết
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setPopupOpen(false);
+                                    setModalType("edit");
+                                    setSelectedData(chumon);
+                                    setModalOpen(true);
+                                  }}
+                                  className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  Chỉnh sửa
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    setPopupOpen(false);
+                                    const confirmDelete = window.confirm(
+                                      `Bạn chắc chắn muốn xóa đơn hàng: ${chumon.ChumonNo}?`
+                                    );
+                                    if (confirmDelete) {
+                                      try {
+                                        const token =
+                                          localStorage.getItem("authToken") ||
+                                          "";
+                                        await deleteChumon(
+                                          chumon.ChumonId,
+                                          token
+                                        );
+
+                                        const refreshed = await getAllChumons(
+                                          token
+                                        );
+                                        setChumons(refreshed.Data);
+
+                                        toast.success(
+                                          "Xóa đơn hàng thành công!"
+                                        );
+                                      } catch (error) {
+                                        console.error(
+                                          "Đã xảy ra lỗi khi xóa đơn hàng:",
+                                          error
+                                        );
+                                        toast.error(
+                                          "Đã xảy ra lỗi khi xóa đơn hàng."
+                                        );
+                                      }
+                                    }
+                                  }}
+                                  className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-gray-100"
+                                >
+                                  Xóa
+                                </button>
+                              </div>
+                            )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
+      <ChumonModal
+        open={modalOpen}
+        type={modalType}
+        defaultValues={selectedData ?? undefined}
+        onClose={() => setModalOpen(false)}
+        onSave={async (newData) => {
+          if (modalType === "view") return;
+
+          try {
+            const token = localStorage.getItem("authToken") || "";
+            if (modalType === "add") {
+              await createChumon(newData, token);
+              toast.success("Thêm mới thành công!");
+            } else if (modalType === "edit" && newData.ChumonId) {
+              await updateChumon(newData.ChumonId, newData, token);
+              toast.success("Cập nhật thành công!");
+            }
+            const refreshed = await getAllChumons(token);
+            setChumons(refreshed.Data);
+          } catch (err) {
+            console.error("Lỗi khi lưu:", err);
+            toast.error("Đã xảy ra lỗi khi lưu dữ liệu.");
+          } finally {
+            setModalOpen(false);
+          }
+        }}
+      />
     </div>
   );
 };

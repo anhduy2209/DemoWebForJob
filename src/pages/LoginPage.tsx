@@ -62,7 +62,6 @@ function LoginPage() {
 
     return (
         <div className="min-h-screen bg-white flex items-center justify-center p-4">
-            <Toaster position="top-right" />
             <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full max-w-md p-8">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
