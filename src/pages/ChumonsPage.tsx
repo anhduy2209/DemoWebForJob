@@ -10,6 +10,7 @@ import {
 import ChumonModal from "../components/chumon/ChumonModal";
 import SkeletonRow from "../components/chumon/SkeletonRow";
 import toast, { Toaster } from "react-hot-toast";
+import ChumonFilterModal from "../components/chumon/ChumonFilterModal";
 
 const ChumonsPage = () => {
   const [chumons, setChumons] = useState<ChumonType[]>([]);
@@ -17,6 +18,7 @@ const ChumonsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"add" | "edit" | "view">("add");
   const [selectedData, setSelectedData] = useState<ChumonType | null>(null);
 
@@ -73,7 +75,10 @@ const ChumonsPage = () => {
           Quản lý đơn hàng (Chumon)
         </h1>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          <button
+            onClick={() => setFilterModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <Filter className="w-5 h-5" />
             Bộ lọc
           </button>
@@ -298,6 +303,22 @@ const ChumonsPage = () => {
             toast.error("Đã xảy ra lỗi khi lưu dữ liệu.");
           } finally {
             setModalOpen(false);
+          }
+        }}
+      />
+
+      <ChumonFilterModal
+        open={filterModalOpen}
+        onClose={() => setFilterModalOpen(false)}
+        onFilter={async (filterData) => {
+          try {
+            const token = localStorage.getItem("authToken") || "";
+            const res = await getAllChumons(token, filterData);
+            setChumons(res.Data);
+            toast.success("Lọc thành công.");
+          } catch (err) {
+            console.error("Lỗi khi lọc:", err);
+            toast.error("Lọc thất bại.");
           }
         }}
       />
