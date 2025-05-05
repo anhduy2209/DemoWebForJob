@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createContract, getAllContracts } from '../api/contractApi';
-import ContractFilterPanel from '../components/contract/ContractFilter';
-import ContractForm from '../components/contract/ContractForm';
-import ContractList from '../components/contract/ContractList';
+import ContractFilterPanel from '../components/Contract/ContractFilter';
+import ContractForm from '../components/Contract/ContractForm';
+import ContractList from '../components/Contract/ContractList';
 import { defaultContractFormData } from '../data/contracts';
 import { Contract, ContractFormData } from '../types/contracts';
 
